@@ -33,8 +33,11 @@ class DownRev(TorrentProvider, RSS):
     http_time_between_calls = 1 #seconds
 
     def _search(self, movie, quality, results):
+        pattern = re.compile(r'[^a-zA-Z0-9\s]')
+        _movieTitle = possibleTitles(getTitle(movie['library']))[0]
+        _movieTitle = pattern.sub('', _movieTitle)
+        url = self.urls['search'] % (self.getCatId(quality['identifier'])[0], self.conf('passkey') , _movieTitle.replace(' ', '.'))
 
-        url = self.urls['search'] % (self.getCatId(quality['identifier'])[0], self.conf('passkey') , possibleTitles(getTitle(movie['library']))[0].replace(' ', '.'))
         data = self.getRSSData(url, opener = self.login_opener)
 
         if data:
