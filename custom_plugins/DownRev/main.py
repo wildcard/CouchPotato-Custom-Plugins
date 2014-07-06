@@ -3,7 +3,7 @@ from couchpotato.core.helpers.rss import RSS
 from couchpotato.core.helpers.encoding import tryUrlencode
 from couchpotato.core.helpers.variable import tryInt, possibleTitles, getTitle
 from couchpotato.core.logger import CPLog
-from couchpotato.core.providers.torrent.base import TorrentProvider
+from couchpotato.core.media._base.providers.torrent.base import TorrentProvider
 from urlparse import urlparse, parse_qs
 import re
 import traceback
