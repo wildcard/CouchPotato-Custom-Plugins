@@ -35,7 +35,13 @@ class DownRev(MovieProvider, TorrentProvider, RSS):
 
     def _searchOnTitle(self, title, media, quality, results):
 
-        url = self.urls['search'] % (self.getCatId(quality)[0], self.conf('passkey'), title.replace(' ', '.'))
+        # strip special chars for search
+        pattern = re.compile(r'[^a-zA-Z0-9\s]')
+        _movieTitle = pattern.sub('', title)
+        # replace ' ' by '.'
+        _movieTitle = _movieTitle.replace(' ', '.')
+
+        url = self.urls['search'] % (self.getCatId(quality)[0], self.conf('passkey'), _movieTitle)
         data = self.getRSSData(url, opener = self.login_opener)
 
         if data:
