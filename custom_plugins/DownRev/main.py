@@ -1,17 +1,18 @@
-from bs4 import BeautifulSoup
-from couchpotato.core.helpers.rss import RSS
-from couchpotato.core.helpers.encoding import tryUrlencode
-from couchpotato.core.helpers.variable import tryInt, possibleTitles, getTitle
-from couchpotato.core.logger import CPLog
-from couchpotato.core.media._base.providers.torrent.base import TorrentProvider
-from urlparse import urlparse, parse_qs
 import re
 import traceback
+
+from couchpotato.core.helpers.encoding import tryUrlencode
+from couchpotato.core.helpers.rss import RSS
+from couchpotato.core.helpers.variable import tryInt
+from couchpotato.core.logger import CPLog
+from couchpotato.core.media._base.providers.torrent.base import TorrentProvider
+from couchpotato.core.media.movie.providers.base import MovieProvider
+from urlparse import urlparse, parse_qs
 
 log = CPLog(__name__)
 
 
-class DownRev(TorrentProvider, RSS):
+class DownRev(MovieProvider, TorrentProvider, RSS):
 
     urls = {
         'test' : 'https://www.downrev.net/',
@@ -32,12 +33,9 @@ class DownRev(TorrentProvider, RSS):
 
     http_time_between_calls = 1 #seconds
 
-    def _search(self, movie, quality, results):
-        pattern = re.compile(r'[^a-zA-Z0-9\s]')
-        _movieTitle = possibleTitles(getTitle(movie['library']))[0]
-        _movieTitle = pattern.sub('', _movieTitle)
-        url = self.urls['search'] % (self.getCatId(quality['identifier'])[0], self.conf('passkey') , _movieTitle.replace(' ', '.'))
+    def _searchOnTitle(self, title, media, quality, results):
 
+        url = self.urls['search'] % (self.getCatId(quality)[0], self.conf('passkey'), title.replace(' ', '.'))
         data = self.getRSSData(url, opener = self.login_opener)
 
         if data:
